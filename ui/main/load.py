@@ -54,9 +54,9 @@ def interface_selection_menu():
             if manual == 'y' or manual == 'Y' or manual == 'yes':
                 print(Fore.CYAN+'[-]'+Fore.RESET+' Please Enter The Interface Name.')
                 interface_name = input("> ")
+                INTERFACE=interface_name
                 print(Fore.YELLOW+'[+]'+Fore.RESET+f' Set The Interface: {Fore.GREEN}{INTERFACE}{Fore.RESET}')
                 time.sleep(0.8)
-                INTERFACE=interface_name
             else:
                 sys.exit()
         else:
