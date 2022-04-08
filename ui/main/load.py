@@ -41,44 +41,39 @@ for file_name in os.listdir():
         timestamp = datetime.now()
         shutil.move(file_name, directory + "/backup/" + str(timestamp) + "-" + file_name)
 
-def interface_selection_menu():
-    global INTERFACE
-    time.sleep(1)
-    def select():
-        wlan_pattern = re.compile("^wlan[0-9]+")
-        check_wifi_result = wlan_pattern.findall(subprocess.run(["iwconfig"], capture_output=True).stdout.decode())
-        if len(check_wifi_result) == 0:
-            print(Fore.RED+"[-]"+Fore.RESET+" No WiFi (WLAN) Adapters found.")
-            print(Fore.CYAN+'[?]'+Fore.RESET+' Do You Want to Set The Interface Manually (Y/n)?')
-            manual = str(input("> "))
-            if manual == 'y' or manual == 'Y' or manual == 'yes':
-                print(Fore.CYAN+'[-]'+Fore.RESET+' Please Enter The Interface Name.')
-                interface_name = input("> ")
-                INTERFACE=interface_name
-                print(Fore.YELLOW+'[+]'+Fore.RESET+f' Set The Interface: {Fore.GREEN}{INTERFACE}{Fore.RESET}')
-                time.sleep(0.8)
-            else:
-                sys.exit()
-        else:
-            print(Fore.YELLOW+"[+]"+Fore.RESET+" The Following WiFi Interfaces Are Available:")
-            for index, item in enumerate(check_wifi_result):
-                print(f"{index} - {item}")
-            print('-----------------------------')
-            while True:
-                print(Fore.YELLOW+"[+]"+Fore.RESET+" Please Select The Interface: ")
-                wifi_interface_choice = int(input("> ").strip(" "))
-                try:
-                    if check_wifi_result[int(wifi_interface_choice)]:
-                        break
-                except:
-                    print(Fore.RED+"[-]"+Fore.RESET+" Please Enter a Valid Number From List.")
-            INTERFACE = check_wifi_result[int(wifi_interface_choice)]
-            print(Fore.YELLOW+'[+]'+Fore.RESET+f' Set The Interface: {Fore.GREEN}{INTERFACE}{Fore.RESET}')
-            time.sleep(0.8)
-    if INTERFACE == "":
-        select()
+
+time.sleep(1)
+
+wlan_pattern = re.compile("^wlan[0-9]+")
+check_wifi_result = wlan_pattern.findall(subprocess.run(["iwconfig"], capture_output=True).stdout.decode())
+if len(check_wifi_result) == 0:
+    print(Fore.RED+"[-]"+Fore.RESET+" No WiFi (WLAN) Adapters found.")
+    print(Fore.CYAN+'[?]'+Fore.RESET+' Do You Want to Set The Interface Manually (Y/n)?')
+    manual = str(input("> "))
+    if manual == 'y' or manual == 'Y' or manual == 'yes':
+        print(Fore.CYAN+'[-]'+Fore.RESET+' Please Enter The Interface Name.')
+        interface_name = input("> ")
+        INTERFACE=interface_name
+        print(Fore.YELLOW+'[+]'+Fore.RESET+f' Set The Interface: {Fore.GREEN}{INTERFACE}{Fore.RESET}')
+        time.sleep(0.8)
     else:
-        pass
+        sys.exit()
+else:
+    print(Fore.YELLOW+"[+]"+Fore.RESET+" The Following WiFi Interfaces Are Available:")
+    for index, item in enumerate(check_wifi_result):
+        print(f"{index} - {item}")
+    print('-----------------------------')
+    while True:
+        print(Fore.YELLOW+"[+]"+Fore.RESET+" Please Select The Interface: ")
+        wifi_interface_choice = int(input("> ").strip(" "))
+        try:
+            if check_wifi_result[int(wifi_interface_choice)]:
+                break
+        except:
+            print(Fore.RED+"[-]"+Fore.RESET+" Please Enter a Valid Number From List.")
+    INTERFACE = check_wifi_result[int(wifi_interface_choice)]
+    print(Fore.YELLOW+'[+]'+Fore.RESET+f' Set The Interface: {Fore.GREEN}{INTERFACE}{Fore.RESET}')
+    time.sleep(0.8)
 
 def check_for_essid(essid, lst):
     check_status = True
@@ -174,17 +169,19 @@ def start_scan():
     BSSID = hackbssid
     CHANNEL = hackchannel
     ESSID = hackessid
-    
 
 
+def load_ddos(bss, chh, monitor_num):
+    def load_dos():
+        print(Fore.BLUE+'[*]'+Fore.RESET+' Starting Deauth Attack, Press CTRL + C To Stop...')
+        time.sleep(1)
+        subprocess.run(["aireplay-ng", "--deauth", "0", "-a", bss, monitor_num])
 def ddos_attacks(monitor):
     global INTERFACE
     global BSSID
     global CHANNEL
     def load_dos():
-        print(Fore.BLUE+'[*]'+Fore.RESET+' Starting Deauth Attack, Press CTRL + C To Stop...')
-        time.sleep(1)
-        subprocess.run(["aireplay-ng", "--deauth", "0", "-a", BSSID, monitor])
+        load_ddos(BSSID, CHANNEL, monitor)
     if monitor == "None":
         print(Fore.RED+'[-]'+Fore.RESET+' No Monitor Mode Detected.')
     else:
@@ -237,14 +234,14 @@ Optional features, attacks ({Fore.RED}MONITOR MODE{Fore.LIGHTBLUE_EX})
 
 
 def main_menu():
+    MONITORED_INTERFACE=""
     global INTERFACE
-    global MONITORED_INTERFACE
     def clear_print():
         os.system('clear')
         print(config())
     print(config())
     try:
-        selection_attack = input("> ").strip(" ")
+        selection_attack = input("> ")
     except Exception as menu_error:
         print(Fore.RED+'[-]'+Fore.RESET+f' Error: {menu_error}')
         sys.exit()
@@ -297,7 +294,6 @@ def main_menu():
             clear_print()
 
 if __name__ == "__main__":
-    interface_selection_menu()
     read_version()
     banners()
     main_menu()
