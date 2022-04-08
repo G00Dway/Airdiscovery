@@ -18,15 +18,7 @@ cp -r ui /usr/share/airdiscover
 cp -r temp /usr/share/airdiscover
 cp -r VERSION /usr/share/airdiscover
 echo "[*] Installing APT Pre-Requirements..."
-apt install python python3-pip -y
-apt install php aircrack-ng -y
-apt install php-cgi php-xml -y
-apt install mdk3 -y
-apt install xterm zenity -y
-apt install mdk4 -y
-apt install steghide fuseiso -y
-apt install bettercap -y
-apt install pixiewps -y
+apt install python python3-pip php aircrack-ng php-cgi php-xml mdk3 xterm zenity mdk4 steghide fuseiso bettercap pixiewps -y
 echo "[*] ..."
 echo "[*] Cleaning Cache..."
 apt clean
