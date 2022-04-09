@@ -149,15 +149,18 @@ def ddos_attacks(monitor):
 # 3) Select another interface
 # 4) Scan for available networks (NEEDS MONITOR MODE!)
 # '''
-if MONITOR == "DISABLED":
-    MONITOR = Fore.RED+"DISABLED"+Fore.RESET
-else:
-    MONITOR = Fore.LIGHTGREEN_EX+"ENABLED"+Fore.RESET
+def monitor_configure():
+    if MONITOR == "DISABLED":
+        MONITOR = Fore.RED+"DISABLED"+Fore.RESET
+    else:
+        MONITOR = Fore.LIGHTGREEN_EX+"ENABLED"+Fore.RESET
+
+monitor_configure()
 def config():
     optional_menu = Fore.LIGHTCYAN_EX+f'''
 -------------------{Fore.CYAN}
 Interface: {Fore.GREEN}{INTERFACE}{Fore.CYAN}
-Monitor Mode: {MONITOR}
+Monitor Mode: {MONITOR}{Fore.CYAN}
 Target BSSID: {BSSID}
 Target ESSID: {ESSID}
 Channel: {CHANNEL}
@@ -213,11 +216,15 @@ while True:
         kill_confilict_processes =  subprocess.run(["sudo", "airmon-ng", "check", "kill"])
         print(Fore.LIGHTGREEN_EX+"Putting WiFi Adapter Into Monitored Mode..."+Fore.RESET)
         put_in_monitored_mode = subprocess.run(["sudo", "airmon-ng", "start", INTERFACE])
+        MONITOR="ENABLED"
+        monitor_configure()
         clear_print()
     elif selection_attack == 2:
         print(Fore.LIGHTBLUE_EX+'Putting Interface Into Managed Mode...'+Fore.RESET)
         put_in_monitored_mode = subprocess.run(["sudo", "airmon-ng", "stop", INTERFACE])
         restart_service = subprocess.run(["sudo", "service", "NetworkManager", "restart"])
+        MONITOR="DISABLED"
+        monitor_configure()
         clear_print()
     elif selection_attack == 3:
         time.sleep(2)
