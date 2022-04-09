@@ -179,7 +179,7 @@ Scan, Interface Options
 {Fore.LIGHTBLUE_EX}
 Optional features, attacks ({Fore.RED}MONITOR MODE{Fore.LIGHTBLUE_EX})
 ----------------------------------{Fore.RESET}
-5) Network DDoS Attacks (WPA, WPA2, WEP) ({Fore.LIGHTYELLOW_EX}Aireplay-ng){Fore.RESET}
+5) Deauth Attack / Aireplay (WPA, WPA2, WEP) ({Fore.LIGHTYELLOW_EX}Aireplay-ng){Fore.RESET}
 '''
     return optional_menu
 
@@ -188,6 +188,7 @@ Optional features, attacks ({Fore.RED}MONITOR MODE{Fore.LIGHTBLUE_EX})
 
 def clear_print():
     os.system('clear')
+    banners()
     print(config())
 print(config())
 while True:
@@ -272,9 +273,9 @@ while True:
         hackbssid = active_wireless_networks[int(choice)]["BSSID"]
         hackchannel = active_wireless_networks[int(choice)]["channel"].strip()
         hackessid = active_wireless_networks[int(choice)]["ESSID"]
-        with open("/usr/share/airdiscovery/temp/settings/target-bssid.txt", 'w') as target_bssid:
+        with open("/usr/share/airdiscover/temp/settings/target-bssid.txt", 'w') as target_bssid:
             target_bssid.write(hackbssid)
-        with open("/usr/share/airdiscovery/temp/settings/target-channel.txt", 'w') as target_channel:
+        with open("/usr/share/airdiscover/temp/settings/target-channel.txt", 'w') as target_channel:
             target_channel.write(hackchannel)
         BSSID = hackbssid
         CHANNEL = hackchannel
