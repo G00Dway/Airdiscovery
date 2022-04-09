@@ -150,6 +150,7 @@ def ddos_attacks(monitor):
 # 4) Scan for available networks (NEEDS MONITOR MODE!)
 # '''
 def monitor_configure():
+    global MONITOR
     if MONITOR == "DISABLED":
         MONITOR = Fore.RED+"DISABLED"+Fore.RESET
     else:
@@ -160,7 +161,6 @@ def config():
     optional_menu = Fore.LIGHTCYAN_EX+f'''
 -------------------{Fore.CYAN}
 Interface: {Fore.GREEN}{INTERFACE}{Fore.CYAN}
-Monitor Mode: {MONITOR}{Fore.CYAN}
 Target BSSID: {BSSID}
 Target ESSID: {ESSID}
 Channel: {CHANNEL}
