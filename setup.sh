@@ -25,3 +25,4 @@ apt clean
 echo "[*] Installing PIP Pre-Requirements..."
 pip3 install colorama scapy future paramiko requests
 echo "[*] Done."
+echo "[*] Type 'airdiscover' In Terminal To Run Script"
