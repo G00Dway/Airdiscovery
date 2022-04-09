@@ -200,7 +200,7 @@ Target Encryption: WPA, WPA2, WEP{Fore.LIGHTBLUE_EX}
 0) Go Back
 ---------{Fore.LIGHTBLUE_EX}
 
-MDK Attacks, features, ({Fore.LIGHTGREEN_EX}Public/Local{Fore.RESET}){Fore.LIGHTBLUE_EX}
+MDK Attacks, features {Fore.RESET}({Fore.LIGHTGREEN_EX}Public/Local{Fore.RESET}){Fore.LIGHTBLUE_EX}
 ------------------------------------{Fore.RESET}
 1) Spam AP(s) / MDK4
 2) Deauth Public/Target Network Client(s) / MDK4
@@ -262,6 +262,7 @@ def mdk_attacks_menu():
                 break
             else:
                 mdk4_attacks("spam")
+                clear_print()
         elif selection_attack == 2:
             if bssid_essid_check() == False:
                 print(Fore.RED+'[-]'+Fore.RESET+' No Network Selected!')
@@ -269,6 +270,7 @@ def mdk_attacks_menu():
                 break
             else:
                 mdk4_attacks("client_deauth")
+                clear_print()
         elif selection_attack == 3:
             mdk4_attacks("client_deauth_local")
         elif selection_attack == 4:
@@ -278,6 +280,7 @@ def mdk_attacks_menu():
                 break
             else:
                 mdk4_attacks("crash")
+                clear_print()
         else:
             print(Fore.RED+'[-]'+Fore.RESET+' Select a Valid Option!')
             time.sleep(0.5)
