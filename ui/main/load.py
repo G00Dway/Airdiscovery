@@ -99,6 +99,12 @@ def write_to_log(error):
         os.system(f'rm -rf {log}')
         os.system(f'touch {log}')
         sys.exit()
+    elif error == 'clean_csv':
+        for csv in os.listdir():
+            if ".csv" in csv:
+                os.system('rm -rf '+csv)
+            else:
+                pass
     try:
         with open(log, "a") as log_output:
             log_output.write(error)
@@ -315,6 +321,8 @@ while True:
             time.sleep(0.2)
             sys.stdout.write(f"\rCleaning up temporary files{top}")
         write_to_log("remove_log")
+        write_to_log("clean_csv")
+        print('')
     elif selection_attack == 1:
         print(Fore.LIGHTBLUE_EX+'Killing Processes...'+Fore.RESET)
         kill_confilict_processes =  subprocess.run(["sudo", "airmon-ng", "check", "kill"])
