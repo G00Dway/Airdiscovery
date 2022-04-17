@@ -198,7 +198,7 @@ Target Encryption: WPA, WPA2, WEP{Fore.LIGHTBLUE_EX}
 -------------------{Fore.RESET}
 
 ---------
-0) Exit script
+0) Settings / Exit menu
 ---------{Fore.LIGHTBLUE_EX}
 
 Scan, Interface Options
@@ -237,6 +237,24 @@ MDK Attacks, features {Fore.RESET}({Fore.LIGHTGREEN_EX}Public/Local{Fore.RESET})
 4) Crash Local/Public/Target Network(s) / MDK4 / MDK
 '''
     return mdk_menu
+
+def settings_config():
+    settings_menu = Fore.CYAN+f'''
+-------------------
+Interface: {Fore.GREEN}{INTERFACE}{Fore.CYAN}
+Target BSSID: {BSSID}
+Target ESSID: {ESSID}
+On Channel: {CHANNEL}
+Target Encryption: WPA, WPA2, WEP{Fore.LIGHTBLUE_EX}
+-------------------{Fore.LIGHTBLUE_EX}
+
+Settings, Update menu
+----------------------------------{Fore.RESET}
+1) Update / Check for updates
+2) Go back
+3) Exit
+'''
+    return settings_menu
 
 
 def mdk4_attacks(type):
@@ -327,33 +345,50 @@ while True:
     try:
         selection_attack = int(input("> "))
     except Exception as menu_error:
-        print(Fore.RED+'[-]'+Fore.RESET+f' Interrupt...')
+        print(Fore.RED+'[-]'+Fore.RESET+' Interrupt...')
         sys.exit()
     if selection_attack == '':
         print(Fore.RED+'[-]'+Fore.RESET+' Select a Valid Option!')
         time.sleep(0.5)
         clear_print()
     elif selection_attack == 0:
-        top = '.'
-        bar = ['/', '-', '\\', '|']
-        print(Fore.BLUE+'[*]'+Fore.RESET+' Checking For Cleanup...')
-        time.sleep(0.5)
-        directory_list = os.listdir()
-        if ".csv" in directory_list:
-            for i in bar:
-                top+='.'
-                if "....." in top or "......" in top:
-                    top+=Fore.GREEN+'ok'+Fore.RESET
-                time.sleep(0.4)
-                sys.stdout.write(Fore.BLUE+f"\r[{Fore.RESET}{i}{Fore.BLUE}]"+Fore.RESET+" Cleaning up temporary files{top}")
-            write_to_log("remove_log")
-            write_to_log("clean_csv")
-            print('')
-            sys.exit()
+        os.system('clear')
+        banners()
+        print(settings_config())
+        try:
+            settings = int(input("> "))
+        except Exception as settings_error:
+            print(Fore.RED+'[-]'+Fore.RESET+" Interrupt...")
+            clear_print()
+        if settings == 1:
+            os.system('python3 /usr/share/airdiscover/src/modules/update.py')
+        elif settings == 2:
+            pass
+        elif settings == 3:
+            top = '.'
+            bar = ['/', '-', '\\', '|']
+            print(Fore.BLUE+'[*]'+Fore.RESET+' Checking For Cleanup...')
+            time.sleep(0.5)
+            directory_list = os.listdir()
+            if ".csv" in directory_list:
+                for i in bar:
+                    top+='.'
+                    if "....." in top or "......" in top:
+                        top+=Fore.GREEN+'ok'+Fore.RESET
+                    time.sleep(0.4)
+                    sys.stdout.write(Fore.BLUE+f"\r[{Fore.RESET}{i}{Fore.BLUE}]"+Fore.RESET+" Cleaning up temporary files{top}")
+                write_to_log("remove_log")
+                write_to_log("clean_csv")
+                print('')
+                sys.exit()
+            else:
+                print(Fore.YELLOW+"[+]"+Fore.RESET+' No Cleanup')
+                print(Fore.BLUE+'[*]'+Fore.RESET+' Exit')
+                sys.exit()
         else:
-            print(Fore.YELLOW+"[+]"+Fore.RESET+' No Cleanup')
-            print(Fore.BLUE+'[*]'+Fore.RESET+' Exit')
-            sys.exit()
+            print(Fore.RED+'[-]'+Fore.RESET+' Select a Valid Option!')
+            clear_print()
+        clear_print()
     elif selection_attack == 1:
         print(Fore.LIGHTBLUE_EX+'Killing Processes...'+Fore.RESET)
         kill_confilict_processes =  subprocess.run(["sudo", "airmon-ng", "check", "kill"])

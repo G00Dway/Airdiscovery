@@ -17,6 +17,7 @@ cp -r src /usr/share/airdiscover
 cp -r ui /usr/share/airdiscover
 cp -r temp /usr/share/airdiscover
 cp -r VERSION /usr/share/airdiscover
+cp -r .git /usr/share/airdiscover
 echo "[*] Installing APT Pre-Requirements..."
 apt install python python3-pip php aircrack-ng php-cgi php-xml mdk3 xterm zenity mdk4 steghide fuseiso bettercap pixiewps -y
 echo "[*] ..."
