@@ -26,6 +26,14 @@ BSSID="None"
 ESSID="None"
 CHANNEL="None"
 CRYPTO="None"
+try:
+    if os.path.exists("/usr/share/airdiscover/cache"):
+        pass
+    else:
+        os.mkdir("/usr/share/airdiscover/cache")
+except Exception as mkdir_except:
+    print(Fore.RED+'[-]'+Fore.RESET+' Error: '+mkdir_except)
+    sys.exit()
 if not 'SUDO_UID' in os.environ.keys():
     print(Fore.RED+'[-]'+Fore.RESET+' No root.')
     exit()
@@ -98,16 +106,31 @@ def write_to_log(error):
     if error == 'remove_log':
         os.system(f'rm -rf {log}')
         os.system(f'touch {log}')
-        sys.exit()
     elif error == 'clean_csv':
         for csv in os.listdir():
             if ".csv" in csv:
-                os.system('rm -rf '+csv)
+                try:
+                    with open(log, "a") as log_output_2:
+                        log_output_2.write("file moved:", error)
+                except Exception as log_write:
+                    print(Fore.RED+'[-]'+Fore.RESET+f' Error: {log_write}')
+                    sys.exit()
+                os.system('mv '+csv+' /usr/share/airdiscover/cache')
             else:
                 pass
+    elif error == "cache_clean":
+        try:
+            for files in os.listdir("/usr/share/airdiscover/cache"):
+                if ".csv" in files or ".log" in files:
+                    os.system('rm -rf /usr/share/airdiscover/cache/'+files)
+                else:
+                    pass
+        except Exception as cleanup_error:
+            print(Fore.RED+'[-]'+Fore.RESET+' Error: '+cleanup_error)
+            sys.exit()
     try:
         with open(log, "a") as log_output:
-            log_output.write(error)
+            log_output.write("command:", error)
     except Exception as log_write:
         print(Fore.RED+'[-]'+Fore.RESET+f' Error: {log_write}')
         sys.exit()
@@ -304,7 +327,7 @@ while True:
     try:
         selection_attack = int(input("> "))
     except Exception as menu_error:
-        print(Fore.RED+'[-]'+Fore.RESET+f' Error: {menu_error}')
+        print(Fore.RED+'[-]'+Fore.RESET+f' Interrupt...')
         sys.exit()
     if selection_attack == '':
         print(Fore.RED+'[-]'+Fore.RESET+' Select a Valid Option!')
@@ -312,17 +335,25 @@ while True:
         clear_print()
     elif selection_attack == 0:
         top = '.'
-        print(Fore.BLUE+'[*]'+Fore.RESET+' Exiting From Script...')
-        time.sleep(1)
-        for i in range(4):
-            top+='.'
-            if "....." in top or "......" in top:
-                top+=Fore.GREEN+'ok'+Fore.RESET
-            time.sleep(0.2)
-            sys.stdout.write(f"\rCleaning up temporary files{top}")
-        write_to_log("remove_log")
-        write_to_log("clean_csv")
-        print('')
+        bar = ['/', '-', '\\', '|']
+        print(Fore.BLUE+'[*]'+Fore.RESET+' Checking For Cleanup...')
+        time.sleep(0.5)
+        directory_list = os.listdir()
+        if ".csv" in directory_list:
+            for i in bar:
+                top+='.'
+                if "....." in top or "......" in top:
+                    top+=Fore.GREEN+'ok'+Fore.RESET
+                time.sleep(0.4)
+                sys.stdout.write(Fore.BLUE+f"\r[{Fore.RESET}{i}{Fore.BLUE}]"+Fore.RESET+" Cleaning up temporary files{top}")
+            write_to_log("remove_log")
+            write_to_log("clean_csv")
+            print('')
+            sys.exit()
+        else:
+            print(Fore.YELLOW+"[+]"+Fore.RESET+' No Cleanup')
+            print(Fore.BLUE+'[*]'+Fore.RESET+' Exit')
+            sys.exit()
     elif selection_attack == 1:
         print(Fore.LIGHTBLUE_EX+'Killing Processes...'+Fore.RESET)
         kill_confilict_processes =  subprocess.run(["sudo", "airmon-ng", "check", "kill"])
@@ -339,7 +370,8 @@ while True:
         monitor_configure()
         clear_print()
     elif selection_attack == 3:
-        time.sleep(2)
+        write_to_log("cache_clean")
+        time.sleep(0.9)
         clear_print()
     elif selection_attack == 4:
         print(Fore.CYAN+'[?]'+Fore.RESET+' Please Enter The Monitored Name Of The Interface You Selected:')
