@@ -10,7 +10,7 @@ file_all = None
 
 def config_database(string):
     if "path" in string and "config" in string and "level" in string and "bash_script" in string and "git" in string:
-        pass
+        print(Fore.YELLOW+'[+]'+Fore.RESET+' Config File Seems Valid, Updating...')
     else:
         print(Fore.RED+'[-]'+Fore.RESET+' Config File Seems Corrupted, Exiting...')
         sys.exit()
@@ -56,13 +56,13 @@ def config_database(string):
         except:
             pass
     data_file = "/usr/share/airdiscover/src/modules/update.conf"
-    config_file = configparser.ConfigParser()
+    config_file = configparser.RawConfigParser()
     config_file.read(data_file)
-    path = config_file['path']
-    config_name = config_file['config']
-    level = config_file['level']
-    bash = config_file['bash_script']
-    git = config_file['git']
+    path = config_file['UPDT']['path']
+    config_name = config_file['UPDT']['config']
+    level = config_file['UPDT']['level']
+    bash = config_file['UPDT']['bash_script']
+    git = config_file['UPDT']['git']
     columns()
             
 
@@ -82,7 +82,7 @@ try:
 except Exception as error:
     print(Fore.RED+'[-]'+Fore.RESET+' Error: '+error)
 
-if file_all:
+if True:
     config_database(configration)
 else:
     sys.exit()
