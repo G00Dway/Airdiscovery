@@ -18,7 +18,7 @@ pixie_php = "/usr/share/airdiscover/pixie.php"
 version_log = "/usr/share/airdiscover/VERSION"
 update_check = True
 active_wireless_networks = []
-INTERFACE="" #select interface
+INTERFACE="" #you can specify it manually too
 MONITOR="DISABLED"
 MONITORED_INTERFACE="None"
 NETWORK_SELECTED=False
@@ -26,6 +26,13 @@ BSSID="None"
 ESSID="None"
 CHANNEL="None"
 CRYPTO="None"
+rootless = "None"
+current_dir_list = os.listdir()
+if len(sys.argv) < 2:
+    pass
+else:
+    rootless = sys.argv[1]
+
 try:
     if os.path.exists("/usr/share/airdiscover/cache"):
         pass
@@ -35,8 +42,12 @@ except Exception as mkdir_except:
     print(Fore.RED+'[-]'+Fore.RESET+' Error: '+mkdir_except)
     sys.exit()
 if not 'SUDO_UID' in os.environ.keys():
-    print(Fore.RED+'[-]'+Fore.RESET+' No root.')
-    exit()
+    if rootless == "--no-root":
+        print(Fore.RED+'[-]'+Fore.RESET+' Your Using Airdiscover Without Root, You Can Receive Problems.')
+    else:
+        print(Fore.RED+'[-]'+Fore.RESET+' Run As Root.')
+        print(Fore.RED+'[-]'+Fore.RESET+' To Continue Without Root Type "--no-root"')
+        exit()
 
 for file_name in os.listdir():
     if ".csv" in file_name:
@@ -51,35 +62,38 @@ for file_name in os.listdir():
 
 
 time.sleep(1)
-
-wlan_pattern = re.compile("^wlan[0-9]+")
-check_wifi_result = wlan_pattern.findall(subprocess.run(["iwconfig"], capture_output=True).stdout.decode())
-if len(check_wifi_result) == 0:
-    print(Fore.RED+"[-]"+Fore.RESET+" No WiFi (WLAN) Adapters found.")
-    print(Fore.CYAN+'[?]'+Fore.RESET+' Do You Want to Set The Interface Manually (Y/n)?')
-    manual = str(input("> "))
-    if manual == 'y' or manual == 'Y' or manual == 'yes':
-        print(Fore.CYAN+'[-]'+Fore.RESET+' Please Enter The Interface Name.')
-        interface_name = input("> ")
-        INTERFACE=interface_name
+if INTERFACE == "":
+    wlan_pattern = re.compile("^wlan[0-9]+")
+    check_wifi_result = wlan_pattern.findall(subprocess.run(["iwconfig"], capture_output=True).stdout.decode())
+    if len(check_wifi_result) == 0:
+        print(Fore.RED+"[-]"+Fore.RESET+" No WiFi (WLAN) Adapters found.")
+        print(Fore.CYAN+'[?]'+Fore.RESET+' Do You Want to Set The Interface Manually (Y/n)?')
+        manual = str(input("> "))
+        if manual == 'y' or manual == 'Y' or manual == 'yes':
+            print(Fore.CYAN+'[-]'+Fore.RESET+' Please Enter The Interface Name.')
+            interface_name = input("> ")
+            INTERFACE=interface_name
+            print(Fore.YELLOW+'[+]'+Fore.RESET+f' Set The Interface: {Fore.GREEN}{INTERFACE}{Fore.RESET}')
+            time.sleep(0.8)
+        else:
+            sys.exit()
+    else:
+        print(Fore.YELLOW+"[+]"+Fore.RESET+" The Following WiFi Interfaces Are Available:")
+        for index, item in enumerate(check_wifi_result):
+            print(f"{index} - {item}")
+        print('-----------------------------')
+        while True:
+            print(Fore.YELLOW+"[+]"+Fore.RESET+" Please Select The Interface: ")
+            wifi_interface_choice = int(input("> ").strip(" "))
+            try:
+                if check_wifi_result[int(wifi_interface_choice)]:
+                    break
+            except:
+                print(Fore.RED+"[-]"+Fore.RESET+" Please Enter a Valid Number From List.")
+        INTERFACE = check_wifi_result[int(wifi_interface_choice)]
         print(Fore.YELLOW+'[+]'+Fore.RESET+f' Set The Interface: {Fore.GREEN}{INTERFACE}{Fore.RESET}')
         time.sleep(0.8)
-    else:
-        sys.exit()
 else:
-    print(Fore.YELLOW+"[+]"+Fore.RESET+" The Following WiFi Interfaces Are Available:")
-    for index, item in enumerate(check_wifi_result):
-        print(f"{index} - {item}")
-    print('-----------------------------')
-    while True:
-        print(Fore.YELLOW+"[+]"+Fore.RESET+" Please Select The Interface: ")
-        wifi_interface_choice = int(input("> ").strip(" "))
-        try:
-            if check_wifi_result[int(wifi_interface_choice)]:
-                break
-        except:
-            print(Fore.RED+"[-]"+Fore.RESET+" Please Enter a Valid Number From List.")
-    INTERFACE = check_wifi_result[int(wifi_interface_choice)]
     print(Fore.YELLOW+'[+]'+Fore.RESET+f' Set The Interface: {Fore.GREEN}{INTERFACE}{Fore.RESET}')
     time.sleep(0.8)
 
@@ -198,7 +212,7 @@ Target Encryption: WPA, WPA2, WEP{Fore.LIGHTBLUE_EX}
 -------------------{Fore.RESET}
 
 ---------
-0) Settings / Exit menu
+0) Settings / Update menu / Exit
 ---------{Fore.LIGHTBLUE_EX}
 
 Scan, Interface Options
@@ -369,8 +383,7 @@ while True:
             bar = ['/', '-', '\\', '|']
             print(Fore.BLUE+'[*]'+Fore.RESET+' Checking For Cleanup...')
             time.sleep(0.5)
-            directory_list = os.listdir()
-            if ".csv" in directory_list:
+            if ".csv" in os.listdir():
                 for i in bar:
                     top+='.'
                     if "....." in top or "......" in top:
@@ -383,7 +396,6 @@ while True:
                 sys.exit()
             else:
                 print(Fore.YELLOW+"[+]"+Fore.RESET+' No Cleanup')
-                print(Fore.BLUE+'[*]'+Fore.RESET+' Exit')
                 sys.exit()
         else:
             print(Fore.RED+'[-]'+Fore.RESET+' Select a Valid Option!')
@@ -409,8 +421,17 @@ while True:
         time.sleep(0.9)
         clear_print()
     elif selection_attack == 4:
-        print(Fore.CYAN+'[?]'+Fore.RESET+' Please Enter The Monitored Name Of The Interface You Selected:')
-        wifi_mon = input("> ")
+        for a in os.listdir():
+            if '.csv' in a:
+                os.system('rm -rf '+a)
+            else:
+                pass
+        if MONITORED_INTERFACE == "None":
+            print(Fore.CYAN+'[?]'+Fore.RESET+' Please Enter The Monitored Name Of The Interface You Selected:')
+            wifi_mon = input("> ")
+        else:
+            print(Fore.YELLOW+'[+]'+Fore.RESET+f' Using Monitored Interface: {Fore.LIGHTGREEN_EX}{MONITORED_INTERFACE}{Fore.RESET}')
+            time.sleep(0.7)
         MONITORED_INTERFACE=wifi_mon
         print(Fore.BLUE+"\nPlease, Wait...")
         discover_access_points = subprocess.Popen(["sudo", "airodump-ng","-w" ,"file","--write-interval", "1","--output-format", "csv", wifi_mon], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -435,11 +456,11 @@ while True:
                 print(Fore.RESET+"No |\tBSSID              |\tChannel|\tESSID                         |")
                 print(Fore.RESET+"___|\t___________________|\t_______|\t______________________________|")
                 for index, item in enumerate(active_wireless_networks):
-                    print(f"{index}\t{item['BSSID']}\t{item['channel'].strip()}\t\t{item['ESSID']}")
+                    print(f"{index}\t{Fore.LIGHTGREEN_EX}{item['BSSID']}{Fore.RESET}\t{item['channel'].strip()}\t\t{item['ESSID']}")
                 time.sleep(0.5)
 
         except KeyboardInterrupt:
-            print("")
+            print(Fore.RED+"[-]"+Fore.RESET+" Scan Stopped...")
         while True:
             print(Fore.CYAN+"[?]"+Fore.RESET+" Please select your choice: ")
             choice = input("> ")
