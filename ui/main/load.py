@@ -111,7 +111,7 @@ def write_to_log(error):
             if ".csv" in csv:
                 try:
                     with open(log, "a") as log_output_2:
-                        log_output_2.write("file moved:", error)
+                        log_output_2.write("file moved: "+error)
                 except Exception as log_write:
                     print(Fore.RED+'[-]'+Fore.RESET+f' Error: {log_write}')
                     sys.exit()
@@ -130,7 +130,7 @@ def write_to_log(error):
             sys.exit()
     try:
         with open(log, "a") as log_output:
-            log_output.write("command:", error)
+            log_output.write("command: "+error)
     except Exception as log_write:
         print(Fore.RED+'[-]'+Fore.RESET+f' Error: {log_write}')
         sys.exit()
