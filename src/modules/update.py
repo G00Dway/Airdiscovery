@@ -42,9 +42,10 @@ def config_database(string):
                             print(Fore.BLUE+'[*]'+Fore.RESET+' Running Post-Install Script...')
                             os.system('rm -rf /usr/share/airdiscover')
                             os.system('rm -rf /usr/bin/airdiscover')
-                            os.system('xterm -T Airdiscovery Installation (Update) -e bash /usr/var/airdiscover-trash/airdiscover/setup.sh')
+                            os.system('bash /usr/var/airdiscover-trash/airdiscover/setup.sh')
                         except:
                             pass
+                        os.system('clear')
                         print(Fore.YELLOW+'[+]'+Fore.RESET+f' Successfully Updated To Version: {version}')
                         print(Fore.BLUE+'[*]'+Fore.RESET+' Dont Forget To Restart Airdiscover!')
                         time.sleep(2)
