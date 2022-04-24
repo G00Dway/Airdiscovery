@@ -78,10 +78,11 @@ if INTERFACE == "":
         else:
             sys.exit()
     else:
-        print(Fore.YELLOW+"[+]"+Fore.RESET+" The Following WiFi Interfaces Are Available:")
+        print(Fore.YELLOW+"[+]"+Fore.RESET+" The Following WiFi Interfaces Are Available:\n")
+        print(Fore.LIGHTGREEN_EX+'-----------------------------'+Fore.RESET)
         for index, item in enumerate(check_wifi_result):
             print(f"{index} - {item}")
-        print('-----------------------------')
+        print(Fore.LIGHTGREEN_EX+'-----------------------------\n'+Fore.RESET)
         while True:
             print(Fore.YELLOW+"[+]"+Fore.RESET+" Please Select The Interface: ")
             wifi_interface_choice = int(input("> ").strip(" "))
