@@ -457,7 +457,7 @@ while True:
                 print(Fore.RESET+"No |\tBSSID              |\tChannel|\tESSID                         |")
                 print(Fore.RESET+"___|\t___________________|\t_______|\t______________________________|")
                 for index, item in enumerate(active_wireless_networks):
-                    print(f"{index}\t{Fore.LIGHTGREEN_EX}{item['BSSID']}{Fore.RESET}\t{item['channel'].strip()}\t\t{item['ESSID']}")
+                    print(f"{index}\t{item['BSSID']}\t{item['channel'].strip()}\t\t{item['ESSID']}")
                 time.sleep(0.5)
 
         except KeyboardInterrupt:
